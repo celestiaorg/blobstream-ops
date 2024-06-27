@@ -2,8 +2,9 @@ package main
 
 import (
 	"context"
-	"github.com/celestiaorg/blobstream-ops/cmd/blobstream-ops/root"
 	"os"
+
+	"github.com/celestiaorg/blobstream-ops/cmd/blobstream-ops/root"
 )
 
 func main() {

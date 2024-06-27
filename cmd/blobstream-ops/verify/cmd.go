@@ -4,6 +4,12 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"io"
+	"os"
+	"os/signal"
+	"strings"
+	"syscall"
+
 	"github.com/celestiaorg/blobstream-ops/cmd/blobstream-ops/version"
 	"github.com/cosmos/cosmos-sdk/server"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -15,11 +21,6 @@ import (
 	tmconfig "github.com/tendermint/tendermint/config"
 	tmlog "github.com/tendermint/tendermint/libs/log"
 	"github.com/tendermint/tendermint/rpc/client/http"
-	"io"
-	"os"
-	"os/signal"
-	"strings"
-	"syscall"
 )
 
 // Command the verify command

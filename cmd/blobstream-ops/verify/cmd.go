@@ -25,27 +25,30 @@ import (
 
 // Command the verify command
 func Command() *cobra.Command {
-	orchCmd := &cobra.Command{
+	cmd := &cobra.Command{
 		Use:          "verify",
 		Short:        "BlobstreamX deployment verification",
-		Long:         "verifies that a BlobstreamX contract is committing to valid data",
+		Long:         "verifies a BlobstreamX deployment",
 		SilenceUsage: true,
 	}
 
-	orchCmd.AddCommand(
-		Start(),
+	cmd.AddCommand(
+		VerifyContractCommand(),
 	)
 
-	orchCmd.SetHelpCommand(&cobra.Command{})
+	cmd.SetHelpCommand(&cobra.Command{})
 
-	return orchCmd
+	return cmd
 }
 
-// Start the verifier start command.
-func Start() *cobra.Command {
+// VerifyContractCommand the contract verifier start command.
+//
+//nolint:all
+func VerifyContractCommand() *cobra.Command {
 	command := &cobra.Command{
-		Use:   "start <flags>",
-		Short: "Starts the BlobstreamX verifier",
+		Use:   "contract <flags>",
+		Short: "Starts the BlobstreamX contract verifier",
+		Long:  "verifies that a BlobstreamX contract is committing to valid data",
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			config, err := parseStartFlags(cmd)
 			if err != nil {

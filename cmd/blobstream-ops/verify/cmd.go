@@ -46,7 +46,7 @@ func Start() *cobra.Command {
 	command := &cobra.Command{
 		Use:   "start <flags>",
 		Short: "Starts the BlobstreamX verifier",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *cobra.Command, _ []string) error {
 			config, err := parseStartFlags(cmd)
 			if err != nil {
 				return err
@@ -133,9 +133,8 @@ func Start() *cobra.Command {
 						_, exists := dataCommitmentEvents[int(events.Event.ProofNonce.Int64())]
 						if exists {
 							continue
-						} else {
-							dataCommitmentEvents[int(events.Event.ProofNonce.Int64())] = *events.Event
 						}
+						dataCommitmentEvents[int(events.Event.ProofNonce.Int64())] = *events.Event
 					}
 					if !events.Next() {
 						break

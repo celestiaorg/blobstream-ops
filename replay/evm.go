@@ -115,7 +115,7 @@ func submitProof(
 	waitTimeout time.Duration,
 ) error {
 	for i := 0; i < 10; i++ {
-		logger.Info("submitting proof", "nonce", proofNonce, "gas_price", opts.GasPrice.Int64())
+		logger.Info("submitting transaction for proof", "nonce", proofNonce, "gas_price", opts.GasPrice.Int64())
 		tx, err := succinctGateway.FulfillCall(
 			opts,
 			args.FunctionID,
@@ -128,6 +128,7 @@ func submitProof(
 		if err != nil {
 			return err
 		}
+		logger.Info("transaction submitted", "hash", tx.Hash().Hex())
 		_, err = waitForTransaction(ctx, logger, client, tx, waitTimeout)
 		if err != nil {
 			actualNonce, err := targetBlobstreamXContract.StateProofNonce(&bind.CallOpts{})

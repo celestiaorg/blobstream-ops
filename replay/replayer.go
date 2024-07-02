@@ -82,7 +82,7 @@ func Follow(
 
 			logger.Debug("decoding the proof")
 			rawMap := make(map[string]interface{})
-			err = abi.UnpackIntoMap(rawMap, "fulfillCall", tx.Data())
+			err = abi.UnpackIntoMap(rawMap, "fulfillCall", tx.Data()[4:])
 			if err != nil {
 				return err
 			}
@@ -229,7 +229,8 @@ func Catchup(
 
 		logger.Debug("decoding the proof")
 		rawMap := make(map[string]interface{})
-		err = abi.UnpackIntoMap(rawMap, "fulfillCall", tx.Data())
+		inputArgs := abi.Methods["fulfillCall"].Inputs
+		err = inputArgs.UnpackIntoMap(rawMap, tx.Data()[4:])
 		if err != nil {
 			return err
 		}

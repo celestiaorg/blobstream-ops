@@ -6,7 +6,7 @@ import (
 
 	"github.com/celestiaorg/blobstream-ops/cmd/blobstream-ops/common"
 	"github.com/celestiaorg/blobstream-ops/cmd/blobstream-ops/version"
-	"github.com/celestiaorg/blobstream-ops/replayer"
+	"github.com/celestiaorg/blobstream-ops/replay"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	ethcmn "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -89,17 +89,17 @@ func Command() *cobra.Command {
 				config.CoreRPC,
 			)
 
-			latestSourceNonce, err := sourceBlobstreamReader.StateProofNonce(&bind.CallOpts{})
+			latestSourceBlock, err := sourceBlobstreamReader.LatestBlock(&bind.CallOpts{})
 			if err != nil {
 				return err
 			}
-			logger.Info("found latest source blobstreamX contract nonce", "nonce", latestSourceNonce.Int64())
+			logger.Info("found source blobstreamX contract", "latest_block", latestSourceBlock)
 
-			latestTargetNonce, err := targetBlobstreamReader.StateProofNonce(&bind.CallOpts{})
+			latestTargetBlock, err := targetBlobstreamReader.LatestBlock(&bind.CallOpts{})
 			if err != nil {
 				return err
 			}
-			logger.Info("found latest target blobstreamX contract nonce", "nonce", latestTargetNonce.Int64())
+			logger.Info("found target blobstreamX contract", "latest_block", latestTargetBlock)
 
 			var trpc *http.HTTP
 			if config.Verify {
@@ -119,8 +119,8 @@ func Command() *cobra.Command {
 				}(trpc)
 			}
 
-			if latestSourceNonce.Int64() > latestTargetNonce.Int64() {
-				err = replayer.Catchup(
+			if latestSourceBlock > latestTargetBlock {
+				err = replay.Catchup(
 					ctx,
 					logger,
 					config.Verify,
@@ -139,7 +139,7 @@ func Command() *cobra.Command {
 				logger.Info("target contract is already up to date")
 			}
 
-			return replayer.Follow(
+			return replay.Follow(
 				ctx,
 				logger,
 				config.Verify,

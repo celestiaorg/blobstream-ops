@@ -1,4 +1,4 @@
-package replayer
+package replay
 
 import (
 	"bytes"
@@ -60,21 +60,21 @@ func Follow(
 		case <-ctx.Done():
 			return nil
 		case event := <-newEvents:
-			latestTargetContractNonce, err := targetBlobstreamX.LatestBlock(&bind.CallOpts{Context: ctx})
+			latestTargetContractBlock, err := targetBlobstreamX.LatestBlock(&bind.CallOpts{Context: ctx})
 			if err != nil {
 				return err
 			}
-			if event.ProofNonce.Int64() < int64(latestTargetContractNonce) {
-				logger.Info("the target contract is at a higher nonce, waiting for new events", "event_nonce", event.ProofNonce, "target_contract_latest_nonce", latestTargetContractNonce)
+			if event.StartBlock < latestTargetContractBlock {
+				logger.Info("the target contract is at a higher block, waiting for new events", "event_start_block", event.StartBlock, "target_contract_latest_block", latestTargetContractBlock)
 				continue
-			} else if event.ProofNonce.Int64() > int64(latestTargetContractNonce) {
-				logger.Info("the target contract needs to catchup", "event_nonce", event.ProofNonce, "target_contract_latest_nonce", latestTargetContractNonce)
+			} else if event.StartBlock > latestTargetContractBlock {
+				logger.Info("the target contract needs to catchup", "event_start_block", event.StartBlock, "target_contract_latest_block", latestTargetContractBlock)
 				err = Catchup(ctx, logger, verify, trpc, sourceEVMClient, targetEVMClient, sourceBlobstreamContractAddress, targetBlobstreamContractAddress, targetChainGatewayAddress, privateKey)
 				if err != nil {
 					return err
 				}
 			}
-			logger.Debug("getting transaction containing the proof", "nonce", event.ProofNonce.Int64(), "hash", event.Raw.TxHash.Hex())
+			logger.Debug("getting transaction containing the proof", "nonce", event.ProofNonce.Int64(), "hash", event.Raw.TxHash.Hex(), "start_block", event.StartBlock)
 			tx, _, err := sourceEVMClient.TransactionByHash(ctx, event.Raw.TxHash)
 			if err != nil {
 				return err
@@ -148,17 +148,22 @@ func Catchup(
 		return err
 	}
 
-	latestSourceContractNonce, err := sourceBlobstreamX.LatestBlock(&bind.CallOpts{Context: ctx})
+	latestSourceContractBlock, err := sourceBlobstreamX.LatestBlock(&bind.CallOpts{Context: ctx})
 	if err != nil {
 		return err
 	}
 
-	latestTargetContractNonce, err := targetBlobstreamX.LatestBlock(&bind.CallOpts{Context: ctx})
+	latestTargetContractBlock, err := targetBlobstreamX.LatestBlock(&bind.CallOpts{Context: ctx})
 	if err != nil {
 		return err
 	}
 
-	logger.Info("catching up", "latest_source_contract_nonce", latestSourceContractNonce, "latest_target_contract_nonce", latestTargetContractNonce)
+	logger.Info("catching up", "latest_source_contract_block", latestSourceContractBlock, "latest_target_contract_block", latestTargetContractBlock)
+
+	latestSourceContractNonce, err := sourceBlobstreamX.StateProofNonce(&bind.CallOpts{Context: ctx})
+	if err != nil {
+		return err
+	}
 
 	// TODO: this could be improved in the future to only get the events needed
 	dataCommitmentEvents, err := getAllDataCommitmentStoredEvents(
@@ -167,7 +172,7 @@ func Catchup(
 		&sourceBlobstreamX.BlobstreamXFilterer,
 		int64(lookupStartHeight),
 		filterRange,
-		int64(latestSourceContractNonce),
+		latestSourceContractNonce.Int64(),
 	)
 	if err != nil {
 		return err
@@ -182,14 +187,14 @@ func Catchup(
 		return err
 	}
 
-	for nonce := latestTargetContractNonce; nonce < latestSourceContractNonce; nonce++ {
-		event, exists := dataCommitmentEvents[int(nonce)]
+	for startHeight := latestTargetContractBlock; startHeight < latestSourceContractBlock; {
+		event, exists := dataCommitmentEvents[int64(startHeight)]
 		if !exists {
-			return fmt.Errorf("couldn't find nonce %d in events", nonce)
+			return fmt.Errorf("couldn't find a proof that starts at height %d in events", startHeight)
 		}
 
 		if verify {
-			logger.Info("verifying data root tuple root", "nonce", event.ProofNonce, "start_block", event.StartBlock, "end_block", event.EndBlock)
+			logger.Info("verifying data root tuple root", "proof_nonce_in_source_contract", event.ProofNonce, "start_block", event.StartBlock, "end_block", event.EndBlock)
 			coreDataCommitment, err := trpc.DataCommitment(ctx, event.StartBlock, event.EndBlock)
 			if err != nil {
 				return err
@@ -197,8 +202,8 @@ func Catchup(
 			if bytes.Equal(coreDataCommitment.DataCommitment.Bytes(), event.DataCommitment[:]) {
 				logger.Info("data commitment verified")
 			} else {
-				logger.Error("data commitment mismatch!! quitting", "nonce", event.ProofNonce)
-				return fmt.Errorf("data commitment mistmatch. nonce %d", event.ProofNonce)
+				logger.Error("data commitment mismatch!! quitting", "proof_nonce_in_source_contract", event.ProofNonce, "start_block", event.StartBlock, "end_block", event.EndBlock)
+				return fmt.Errorf("data commitment mistmatch. start height %d end height %d", event.StartBlock, event.EndBlock)
 			}
 		}
 
@@ -207,19 +212,16 @@ func Catchup(
 			return err
 		}
 
-		latestTargetBlock, err := targetBlobstreamX.LatestBlock(&bind.CallOpts{Context: ctx})
+		latestTargetContractBlock, err = targetBlobstreamX.LatestBlock(&bind.CallOpts{Context: ctx})
 		if err != nil {
 			return err
 		}
-		if latestTargetBlock > latestSourceBlock {
+		if latestTargetContractBlock >= latestSourceBlock {
 			// contract already up to date
 			return nil
 		}
-		if latestTargetBlock != event.StartBlock {
-			return fmt.Errorf("can't replay event to contract. mismatch latest target block %d and start block %d", latestTargetBlock, event.StartBlock)
-		}
 
-		logger.Debug("getting transaction containing the proof", "nonce", nonce, "hash", event.Raw.TxHash.Hex())
+		logger.Debug("getting transaction containing the proof", "startHeight", startHeight, "hash", event.Raw.TxHash.Hex())
 		tx, _, err := sourceEVMClient.TransactionByHash(ctx, event.Raw.TxHash)
 		if err != nil {
 			return err
@@ -240,7 +242,7 @@ func Catchup(
 		// update the address to be the target blobstreamX contract for the callback
 		decodedArgs.CallbackAddress = ethcmn.HexToAddress(targetBlobstreamContractAddress)
 
-		logger.Info("replaying the proof", "nonce", nonce)
+		logger.Info("replaying the proof", "startHeight", startHeight)
 		opts, err := newTransactOptsBuilder(privateKey)(ctx, targetEVMClient, 25000000)
 		if err != nil {
 			return err
@@ -253,20 +255,21 @@ func Catchup(
 			gateway,
 			targetBlobstreamX,
 			decodedArgs,
-			int64(nonce),
+			int64(startHeight),
 			3*time.Minute,
 		)
 		if err != nil {
 			return err
 		}
+		startHeight = event.EndBlock
 	}
 
-	latestTargetContractNonce, err = targetBlobstreamX.LatestBlock(&bind.CallOpts{Context: ctx})
+	latestTargetContractBlock, err = targetBlobstreamX.LatestBlock(&bind.CallOpts{Context: ctx})
 	if err != nil {
 		return err
 	}
 
-	logger.Info("contract up to date", "latest_nonce", latestTargetContractNonce)
+	logger.Info("contract up to date", "latest_nonce", latestTargetContractBlock)
 	return nil
 }
 
@@ -277,9 +280,9 @@ func getAllDataCommitmentStoredEvents(
 	lookupStartHeight int64,
 	filterRange int64,
 	latestSourceContractNonce int64,
-) (map[int]blobstreamxwrapper.BlobstreamXDataCommitmentStored, error) {
+) (map[int64]blobstreamxwrapper.BlobstreamXDataCommitmentStored, error) {
 	logger.Info("querying all the data commitment stored events in the source contract...")
-	dataCommitmentEvents := make(map[int]blobstreamxwrapper.BlobstreamXDataCommitmentStored)
+	dataCommitmentEvents := make(map[int64]blobstreamxwrapper.BlobstreamXDataCommitmentStored)
 	for eventLookupEnd := lookupStartHeight; eventLookupEnd > 0; eventLookupEnd -= filterRange {
 		logger.Debug("querying all the data commitment stored events", "evm_block_start", eventLookupEnd, "evm_block_end", eventLookupEnd-filterRange)
 		rangeStart := eventLookupEnd - filterRange
@@ -300,11 +303,11 @@ func getAllDataCommitmentStoredEvents(
 
 		for {
 			if events.Event != nil {
-				_, exists := dataCommitmentEvents[int(events.Event.ProofNonce.Int64())]
+				_, exists := dataCommitmentEvents[int64(events.Event.StartBlock)]
 				if exists {
 					continue
 				} else {
-					dataCommitmentEvents[int(events.Event.ProofNonce.Int64())] = *events.Event
+					dataCommitmentEvents[int64(events.Event.StartBlock)] = *events.Event
 				}
 			}
 			if !events.Next() {

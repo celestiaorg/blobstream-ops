@@ -1,4 +1,4 @@
-package replayer
+package replay
 
 import (
 	"context"

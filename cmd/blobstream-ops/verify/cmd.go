@@ -4,22 +4,14 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"io"
-	"os"
-	"os/signal"
-	"strings"
-	"syscall"
 
+	"github.com/celestiaorg/blobstream-ops/cmd/blobstream-ops/common"
 	"github.com/celestiaorg/blobstream-ops/cmd/blobstream-ops/version"
-	"github.com/cosmos/cosmos-sdk/server"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	ethcmn "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	blobstreamxwrapper "github.com/succinctlabs/blobstreamx/bindings"
-	tmconfig "github.com/tendermint/tendermint/config"
-	tmlog "github.com/tendermint/tendermint/libs/log"
 	"github.com/tendermint/tendermint/rpc/client/http"
 )
 
@@ -58,7 +50,7 @@ func VerifyContractCommand() *cobra.Command {
 				return err
 			}
 
-			logger, err := GetLogger(config.LogLevel, config.LogFormat)
+			logger, err := common.GetLogger(config.LogLevel, config.LogFormat)
 			if err != nil {
 				return err
 			}
@@ -85,7 +77,7 @@ func VerifyContractCommand() *cobra.Command {
 			}
 
 			// Listen for and trap any OS signal to graceful shutdown and exit
-			go TrapSignal(logger, cancel)
+			go common.TrapSignal(logger, cancel)
 
 			logger.Info(
 				"starting verifier",
@@ -162,7 +154,7 @@ func VerifyContractCommand() *cobra.Command {
 			defer func(trpc *http.HTTP) {
 				err := trpc.Stop()
 				if err != nil {
-					fmt.Println(err.Error())
+					logger.Error("error stopping tendermint RPC", "err", err.Error())
 				}
 			}(trpc)
 
@@ -188,32 +180,4 @@ func VerifyContractCommand() *cobra.Command {
 		},
 	}
 	return addStartFlags(command)
-}
-
-// GetLogger creates a new logger and returns
-func GetLogger(level string, format string) (tmlog.Logger, error) {
-	logLvl, err := zerolog.ParseLevel(level)
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse log level (%s): %w", level, err)
-	}
-	var logWriter io.Writer
-	if strings.ToLower(format) == tmconfig.LogFormatPlain {
-		logWriter = zerolog.ConsoleWriter{Out: os.Stderr}
-	} else {
-		logWriter = os.Stderr
-	}
-
-	return server.ZeroLogWrapper{Logger: zerolog.New(logWriter).Level(logLvl).With().Timestamp().Logger()}, nil
-}
-
-// TrapSignal will listen for any OS signal and cancel the context to exit gracefully.
-func TrapSignal(logger tmlog.Logger, cancel context.CancelFunc) {
-	sigCh := make(chan os.Signal, 1)
-
-	signal.Notify(sigCh, syscall.SIGTERM)
-	signal.Notify(sigCh, syscall.SIGINT)
-
-	sig := <-sigCh
-	logger.Info("caught signal; shutting down...", "signal", sig.String())
-	cancel()
 }

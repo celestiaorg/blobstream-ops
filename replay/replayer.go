@@ -375,11 +375,10 @@ func getAllDataCommitmentStoredEvents(
 				_, exists := dataCommitmentEvents[int64(events.Event.StartBlock)]
 				if exists {
 					continue
-				} else {
-					dataCommitmentEvents[int64(events.Event.StartBlock)] = *events.Event
-					if int64(events.Event.StartBlock) < latestTargetContractBlock {
-						gatheredTheNecessaryEvents = true
-					}
+				}
+				dataCommitmentEvents[int64(events.Event.StartBlock)] = *events.Event
+				if int64(events.Event.StartBlock) < latestTargetContractBlock {
+					gatheredTheNecessaryEvents = true
 				}
 			}
 			if !events.Next() {

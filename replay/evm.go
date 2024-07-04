@@ -152,11 +152,10 @@ func submitProof(
 				opts.GasPrice = big.NewInt(bigGasPrice.Int64() + bigGasPrice.Int64()/5)
 				logger.Debug("transaction still not included, accelerating...", "new_gas_price", opts.GasPrice.Int64())
 				continue
-			} else {
-				logger.Error("transaction failed", "err", err.Error())
-				logger.Debug("retrying...")
-				return err
 			}
+			logger.Error("transaction failed", "err", err.Error())
+			logger.Debug("retrying...")
+			return err
 		}
 		return nil
 	}

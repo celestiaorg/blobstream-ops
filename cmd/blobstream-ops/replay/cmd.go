@@ -21,7 +21,7 @@ func Command() *cobra.Command {
 		Short:        "BlobstreamX deployment verification",
 		Long:         "verifies that a BlobstreamX contract is committing to valid data",
 		SilenceUsage: true,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *cobra.Command, _ []string) error {
 			config, err := parseFlags(cmd)
 			if err != nil {
 				return err

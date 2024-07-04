@@ -2,6 +2,7 @@ package replay
 
 import (
 	"crypto/ecdsa"
+	"encoding/hex"
 	"errors"
 	"fmt"
 
@@ -18,6 +19,10 @@ const (
 	FlagTargetEVMContractAddress = "evm.target.contract-address"
 	FlagTargetChainGateway       = "evm.target.gateway"
 	FlagEVMPrivateKey            = "evm.private-key"
+	FlagEVMFilterRange           = "evm.filter-range"
+
+	FlagHeaderRangeFunctionID = "circuits.header-range.functionID"
+	FlagNextHeaderFunctionID  = "circuits.next-header.functionID"
 
 	FlagVerify = "verify"
 
@@ -50,6 +55,9 @@ func addFlags(cmd *cobra.Command) *cobra.Command {
 	)
 	cmd.Flags().Bool(FlagVerify, false, "Set to verify the commitments before replaying their proofs. Require the core rpc flag to be set")
 	cmd.Flags().String(FlagEVMPrivateKey, "", "Specify the EVM private key, in hex format without the leading 0x, to use for replaying transaction in the target chain. Corresponding account should be funded")
+	cmd.Flags().String(FlagHeaderRangeFunctionID, "", "Specify the function ID of the header range circuit in the target BlobstreamX contract, in hex format without the leading 0x")
+	cmd.Flags().String(FlagNextHeaderFunctionID, "", "Specify the function ID of the next header circuit in the target BlobstreamX contract, in hex format without the leading 0x")
+	cmd.Flags().Int64(FlagEVMFilterRange, 5000, "Specify the eth_getLogs filter range")
 	return cmd
 }
 
@@ -64,6 +72,9 @@ type Config struct {
 	CoreRPC               string
 	Verify                bool
 	PrivateKey            *ecdsa.PrivateKey
+	HeaderRangeFunctionID [32]byte
+	NextHeaderFunctionID  [32]byte
+	FilterRange           int64
 }
 
 func (cfg Config) ValidateBasics() error {
@@ -146,6 +157,46 @@ func parseFlags(cmd *cobra.Command) (Config, error) {
 		return Config{}, fmt.Errorf("failed to hex-decode Ethereum ECDSA Private Key: %w", err)
 	}
 
+	strHeaderRange, err := cmd.Flags().GetString(FlagHeaderRangeFunctionID)
+	if err != nil {
+		return Config{}, err
+	}
+	if strHeaderRange == "" {
+		return Config{}, fmt.Errorf("please set the header range function ID --%s", FlagHeaderRangeFunctionID)
+	}
+	decodedHeaderRange, err := hex.DecodeString(strHeaderRange)
+	if err != nil {
+		return Config{}, err
+	}
+	var bzHeaderRange [32]byte
+	copy(bzHeaderRange[:], decodedHeaderRange)
+
+	strNextHeader, err := cmd.Flags().GetString(FlagNextHeaderFunctionID)
+	if err != nil {
+		return Config{}, err
+	}
+	if strNextHeader == "" {
+		return Config{}, fmt.Errorf("please set the header range function ID --%s", FlagHeaderRangeFunctionID)
+	}
+	decodedNextHeader, err := hex.DecodeString(strNextHeader)
+	if err != nil {
+		return Config{}, err
+	}
+	var bzNextHeader [32]byte
+	copy(bzNextHeader[:], decodedNextHeader)
+
+	filterRange, err := cmd.Flags().GetInt64(FlagEVMFilterRange)
+	if err != nil {
+		return Config{}, err
+	}
+
+	verify, err := cmd.Flags().GetBool(FlagVerify)
+	if err != nil {
+		return Config{}, err
+	}
+
+	// TODO add rate limiting flag
+	// TODO add gas price multiplier flag
 	return Config{
 		SourceEVMRPC:          sourceEVMRPC,
 		TargetEVMRPC:          targetEVMRPC,
@@ -156,5 +207,9 @@ func parseFlags(cmd *cobra.Command) (Config, error) {
 		LogLevel:              logLevel,
 		LogFormat:             logFormat,
 		PrivateKey:            privateKey,
+		NextHeaderFunctionID:  bzNextHeader,
+		HeaderRangeFunctionID: bzHeaderRange,
+		FilterRange:           filterRange,
+		Verify:                verify,
 	}, nil
 }

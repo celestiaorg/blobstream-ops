@@ -2,7 +2,6 @@ package replay
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/celestiaorg/blobstream-ops/cmd/blobstream-ops/common"
 	"github.com/celestiaorg/blobstream-ops/cmd/blobstream-ops/version"
@@ -114,7 +113,7 @@ func Command() *cobra.Command {
 				defer func(trpc *http.HTTP) {
 					err := trpc.Stop()
 					if err != nil {
-						fmt.Println(err.Error())
+						logger.Error("error stopping tendermint RPC", "err", err.Error())
 					}
 				}(trpc)
 			}
@@ -131,6 +130,9 @@ func Command() *cobra.Command {
 					config.TargetContractAddress,
 					config.TargetChainGateway,
 					config.PrivateKey,
+					config.HeaderRangeFunctionID,
+					config.NextHeaderFunctionID,
+					config.FilterRange,
 				)
 				if err != nil {
 					return err
@@ -150,6 +152,9 @@ func Command() *cobra.Command {
 				config.TargetContractAddress,
 				config.TargetChainGateway,
 				config.PrivateKey,
+				config.HeaderRangeFunctionID,
+				config.NextHeaderFunctionID,
+				config.FilterRange,
 			)
 		},
 	}

@@ -131,9 +131,9 @@ func submitProof(
 		logger.Info("transaction submitted", "hash", tx.Hash().Hex())
 		_, err = waitForTransaction(ctx, logger, client, tx, waitTimeout)
 		if err != nil {
-			actualNonce, err := targetBlobstreamXContract.StateProofNonce(&bind.CallOpts{})
-			if err != nil {
-				return err
+			actualNonce, err2 := targetBlobstreamXContract.StateProofNonce(&bind.CallOpts{})
+			if err2 != nil {
+				return err2
 			}
 			if actualNonce.Int64() > proofNonce {
 				logger.Info("no need to replay this nonce, the contract has already committed to it", "nonce", actualNonce)
@@ -141,6 +141,7 @@ func submitProof(
 			}
 
 			if errors.Is(err, context.DeadlineExceeded) {
+				logger.Debug("transaction still not included, accelerating...")
 				// we need to speed up the transaction by increasing the gas price
 				bigGasPrice, err := client.SuggestGasPrice(ctx)
 				if err != nil {
@@ -149,8 +150,11 @@ func submitProof(
 
 				// 20% increase of the suggested gas price
 				opts.GasPrice = big.NewInt(bigGasPrice.Int64() + bigGasPrice.Int64()/5)
+				logger.Debug("transaction still not included, accelerating...", "new_gas_price", opts.GasPrice.Int64())
 				continue
 			} else {
+				logger.Error("transaction failed", "err", err.Error())
+				logger.Debug("retrying...")
 				return err
 			}
 		}

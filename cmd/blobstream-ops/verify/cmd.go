@@ -154,7 +154,7 @@ func VerifyContractCommand() *cobra.Command {
 			defer func(trpc *http.HTTP) {
 				err := trpc.Stop()
 				if err != nil {
-					fmt.Println(err.Error())
+					logger.Error("error stopping tendermint RPC", "err", err.Error())
 				}
 			}(trpc)
 

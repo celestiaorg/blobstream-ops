@@ -42,7 +42,7 @@ func VerifyContractCommand() *cobra.Command {
 		Short: "Starts the BlobstreamX contract verifier",
 		Long:  "verifies that a BlobstreamX contract is committing to valid data",
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			config, err := parseStartFlags(cmd)
+			config, err := parseStartFlags()
 			if err != nil {
 				return err
 			}

@@ -22,7 +22,7 @@ func Command() *cobra.Command {
 		Long:         "verifies that a BlobstreamX contract is committing to valid data",
 		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			config, err := parseFlags(cmd)
+			config, err := parseFlags()
 			if err != nil {
 				return err
 			}

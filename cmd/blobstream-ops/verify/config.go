@@ -4,8 +4,10 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/celestiaorg/blobstream-ops/cmd/blobstream-ops/common"
 	ethcmn "github.com/ethereum/go-ethereum/common"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 const (
@@ -19,23 +21,43 @@ const (
 )
 
 func addStartFlags(cmd *cobra.Command) *cobra.Command {
-	cmd.Flags().String(FlagEVMRPC, "http://localhost:8545", "Specify the ethereum rpc address")
-	cmd.Flags().String(FlagEVMContractAddress, "", "Specify the contract at which the BlobstreamX contract is deployed")
+	viper.AutomaticEnv()
+
+	cmd.Flags().String(
+		FlagEVMRPC,
+		"http://localhost:8545",
+		fmt.Sprintf("Specify the ethereum rpc address. Corresponding environment variable %s", common.ToEnvVariableFormat(FlagEVMRPC)),
+	)
+	common.BindFlagAndEnvVar(cmd, FlagEVMRPC)
+
+	cmd.Flags().String(
+		FlagEVMContractAddress,
+		"",
+		fmt.Sprintf("Specify the contract at which the BlobstreamX contract is deployed. Corresponding environment variable %s", common.ToEnvVariableFormat(FlagEVMContractAddress)),
+	)
+	common.BindFlagAndEnvVar(cmd, FlagEVMContractAddress)
+
 	cmd.Flags().String(
 		FlagLogLevel,
 		"info",
-		"The logging level (trace|debug|info|warn|error|fatal|panic)",
+		fmt.Sprintf("The logging level (trace|debug|info|warn|error|fatal|panic). Corresponding environment variable %s", common.ToEnvVariableFormat(FlagLogLevel)),
 	)
+	common.BindFlagAndEnvVar(cmd, FlagLogLevel)
+
 	cmd.Flags().String(
 		FlagLogFormat,
 		"plain",
-		"The logging format (json|plain)",
+		fmt.Sprintf("The logging format (json|plain). Corresponding environment variable %s", common.ToEnvVariableFormat(FlagLogFormat)),
 	)
+	common.BindFlagAndEnvVar(cmd, FlagLogFormat)
+
 	cmd.Flags().String(
 		FlagCoreRPC,
 		"tcp://localhost:26657",
-		"The celestia app rpc address",
+		fmt.Sprintf("The celestia app rpc address. Corresponding environment variable %s", common.ToEnvVariableFormat(FlagCoreRPC)),
 	)
+	common.BindFlagAndEnvVar(cmd, FlagCoreRPC)
+
 	return cmd
 }
 
@@ -65,30 +87,11 @@ func ValidateEVMAddress(addr string) error {
 }
 
 func parseStartFlags(cmd *cobra.Command) (StartConfig, error) {
-	contractAddress, err := cmd.Flags().GetString(FlagEVMContractAddress)
-	if err != nil {
-		return StartConfig{}, err
-	}
-
-	evmRPC, err := cmd.Flags().GetString(FlagEVMRPC)
-	if err != nil {
-		return StartConfig{}, err
-	}
-
-	coreRPC, err := cmd.Flags().GetString(FlagCoreRPC)
-	if err != nil {
-		return StartConfig{}, err
-	}
-
-	logLevel, err := cmd.Flags().GetString(FlagLogLevel)
-	if err != nil {
-		return StartConfig{}, err
-	}
-
-	logFormat, err := cmd.Flags().GetString(FlagLogFormat)
-	if err != nil {
-		return StartConfig{}, err
-	}
+	contractAddress := viper.GetString(FlagEVMContractAddress)
+	evmRPC := viper.GetString(FlagEVMRPC)
+	coreRPC := viper.GetString(FlagCoreRPC)
+	logLevel := viper.GetString(FlagLogLevel)
+	logFormat := viper.GetString(FlagLogFormat)
 
 	return StartConfig{
 		EVMRPC:          evmRPC,

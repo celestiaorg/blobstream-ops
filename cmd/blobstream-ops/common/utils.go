@@ -51,11 +51,8 @@ func TrapSignal(logger tmlog.Logger, cancel context.CancelFunc) {
 // Example: if the flag is: `--flag1.flag2-flag3`, then, the environment variable that is looked for
 // is `FLAG1_FLAG2_FLAG3`.
 func ToEnvVariableFormat(flag string) string {
-	if strings.HasPrefix(flag, "--") {
-		flag = strings.TrimPrefix(flag, "--")
-	}
 	return strings.ReplaceAll(
-		strings.ToUpper(strings.ReplaceAll(flag, "-", "_")),
+		strings.ToUpper(strings.ReplaceAll(strings.TrimPrefix(flag, "--"), "-", "_")),
 		".",
 		"_",
 	)

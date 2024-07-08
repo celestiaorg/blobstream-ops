@@ -200,9 +200,7 @@ func parseFlags() (Config, error) {
 	if rawPrivateKey == "" {
 		return Config{}, fmt.Errorf("please set the private key --%s or %s", FlagEVMPrivateKey, common.ToEnvVariableFormat(FlagEVMPrivateKey))
 	}
-	if strings.HasPrefix(rawPrivateKey, "0x") {
-		rawPrivateKey = strings.TrimPrefix(rawPrivateKey, "0x")
-	}
+	rawPrivateKey = strings.TrimPrefix(rawPrivateKey, "0x")
 	privateKey, err := crypto.HexToECDSA(rawPrivateKey)
 	if err != nil {
 		return Config{}, fmt.Errorf("failed to hex-decode Ethereum ECDSA Private Key: %w", err)
@@ -212,9 +210,7 @@ func parseFlags() (Config, error) {
 	if strHeaderRange == "" {
 		return Config{}, fmt.Errorf("please set the header range function ID --%s or %s", FlagHeaderRangeFunctionID, common.ToEnvVariableFormat(FlagHeaderRangeFunctionID))
 	}
-	if strings.HasPrefix(strHeaderRange, "0x") {
-		strHeaderRange = strings.TrimPrefix(strHeaderRange, "0x")
-	}
+	strHeaderRange = strings.TrimPrefix(strHeaderRange, "0x")
 	decodedHeaderRange, err := hex.DecodeString(strHeaderRange)
 	if err != nil {
 		return Config{}, err
@@ -226,9 +222,7 @@ func parseFlags() (Config, error) {
 	if strNextHeader == "" {
 		return Config{}, fmt.Errorf("please set the next header function ID --%s or %s", FlagNextHeaderFunctionID, common.ToEnvVariableFormat(FlagNextHeaderFunctionID))
 	}
-	if strings.HasPrefix(strNextHeader, "0x") {
-		strNextHeader = strings.TrimPrefix(strNextHeader, "0x")
-	}
+	strNextHeader = strings.TrimPrefix(strNextHeader, "0x")
 	decodedNextHeader, err := hex.DecodeString(strNextHeader)
 	if err != nil {
 		return Config{}, err

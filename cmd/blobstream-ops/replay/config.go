@@ -179,7 +179,7 @@ func ValidateEVMAddress(addr string) error {
 	return nil
 }
 
-func parseFlags(cmd *cobra.Command) (Config, error) {
+func parseFlags() (Config, error) {
 	sourceContractAddress := viper.GetString(FlagSourceEVMContractAddress)
 
 	targetContractAddress := viper.GetString(FlagTargetEVMContractAddress)

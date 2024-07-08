@@ -86,7 +86,7 @@ func ValidateEVMAddress(addr string) error {
 	return nil
 }
 
-func parseStartFlags(cmd *cobra.Command) (StartConfig, error) {
+func parseStartFlags() (StartConfig, error) {
 	contractAddress := viper.GetString(FlagEVMContractAddress)
 	evmRPC := viper.GetString(FlagEVMRPC)
 	coreRPC := viper.GetString(FlagCoreRPC)

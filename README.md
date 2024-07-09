@@ -116,7 +116,7 @@ And you should see the proofs being queried from the existing deployment and rep
 
 ### Tools
 
-1. Install [golangci-lint](https://golangci-lint.run/usage/install/)
+1. Install [golangci-lint](https://golangci-lint.run/welcome/install/)
 2. Install [markdownlint](https://github.com/DavidAnson/markdownlint)
 
 ### Helpful Commands

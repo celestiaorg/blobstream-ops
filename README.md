@@ -22,13 +22,13 @@ blobstream-ops --help
 ## BlobstreamX contract verification
 
 One of the tools that the blobstream-ops CLI provides is the `verify` subcommand. It allows verifying that a BlobstreamX deployment is valid.
-It works by taking a trusted Celestia RPC endpoints. Then, it goes over the data root tuple roots stored in the contract, and regenerates the 
+It works by taking a trusted Celestia RPC endpoints. Then, it goes over the data root tuple roots stored in the contract, and regenerates the
 data commitment using the provided trusted RPC endpoint. Finally, it compares them and errors if any of the data root tuple roots is not valid.
 
 Since Blobstream makes a 2/3rd honest validator set assumption, if more than 2/3rd of the validator set is malicious, they can commit to an invalid
 data root tuple root. This tool allows verifying that that didn't happen using a trusted RPC endpoint.
 
-### Usage
+### Verification command usage
 
 After installing the blobstream-ops CLI, you can verify the contract using the following subcommand:
 
@@ -81,7 +81,7 @@ Refer to [docs](https://docs.celestia.org/developers/blobstream-x-deploy).
 Also, make sure the trusted block used to initialise the BlobstreamX contract corresponds to a `start_block`
 in the existing BlobstreamX deployment. Otherwise, the proofs will not be able to be relayed.
 
-### Usage
+### Replay command usage
 
 After installing the blobstream-ops CLI, you can use the replay tool using the following subcommand:
 
@@ -90,7 +90,7 @@ blobstream-ops replay --help
 ```
 
 Similar to the above `verify` command, the arguments can be provided either using the CLI or through environment
-variables. 
+variables.
 
 To this matter, the `.env.replay.example` provides an example set of environment variables that need to be set in order
 for the replay command to run.

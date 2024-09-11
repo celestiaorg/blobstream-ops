@@ -1,6 +1,6 @@
 module github.com/celestiaorg/blobstream-ops
 
-go 1.22.3
+go 1.23.1
 
 require (
 	github.com/cosmos/cosmos-sdk v0.50.3

@@ -2,6 +2,8 @@
 
 This repo contains a set of Blobstream related tooling.
 
+Note: currently, this repo only supports BlobstreamX deployments. If there is a need to support SP1 Blobstream, please reach out to the team.
+
 ## Install
 
 1. [Install Go](https://go.dev/doc/install) 1.22

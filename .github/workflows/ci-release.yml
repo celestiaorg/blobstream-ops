@@ -41,7 +41,7 @@ jobs:
       - uses: goreleaser/goreleaser-action@v6.0.0
         with:
           version: latest
-          argn3el nns: check
+          args: check
 
   # branch_name trims ref/heads/ from github.ref to access a clean branch name
   branch_name:

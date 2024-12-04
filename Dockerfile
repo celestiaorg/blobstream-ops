@@ -1,5 +1,5 @@
 # stage 1 Build blobstream-ops binary
-FROM --platform=$BUILDPLATFORM docker.io/golang:1.23.3-alpine3.20 as builder
+FROM --platform=$BUILDPLATFORM docker.io/golang:1.23.4-alpine3.20 as builder
 
 ARG TARGETOS
 ARG TARGETARCH

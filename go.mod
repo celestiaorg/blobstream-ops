@@ -7,7 +7,7 @@ toolchain go1.24.1
 require (
 	github.com/cosmos/cosmos-sdk v0.50.3
 	github.com/rs/zerolog v1.34.0
-	github.com/spf13/cobra v1.10.0
+	github.com/spf13/cobra v1.10.1
 	github.com/spf13/viper v1.20.1
 	github.com/succinctlabs/blobstreamx v0.0.0-20240115194141-5649c689a7fe
 	github.com/succinctlabs/succinctx v1.1.0
@@ -165,7 +165,7 @@ require (
 require (
 	github.com/ethereum/go-ethereum v1.16.2
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/spf13/pflag v1.0.8 // indirect
+	github.com/spf13/pflag v1.0.9 // indirect
 )
 
 replace (

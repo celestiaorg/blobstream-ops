@@ -7,7 +7,7 @@ toolchain go1.24.1
 require (
 	github.com/cosmos/cosmos-sdk v0.50.3
 	github.com/rs/zerolog v1.34.0
-	github.com/spf13/cobra v1.10.1
+	github.com/spf13/cobra v1.10.2
 	github.com/spf13/viper v1.21.0
 	github.com/succinctlabs/blobstreamx v0.0.0-20240115194141-5649c689a7fe
 	github.com/succinctlabs/succinctx v1.1.0

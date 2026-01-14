@@ -2,6 +2,7 @@ version: "2"
 
 run:
   modules-download-mode: readonly
+
 linters:
   enable:
     - misspell
@@ -18,6 +19,7 @@ linters:
       - third_party$
       - builtin$
       - examples$
+
 formatters:
   enable:
     - gofumpt
@@ -27,7 +29,3 @@ formatters:
       - third_party$
       - builtin$
       - examples$
-
-formatters:
-  enable:
-    - gofumpt

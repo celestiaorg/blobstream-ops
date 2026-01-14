@@ -1,4 +1,5 @@
 version: "2"
+
 run:
   modules-download-mode: readonly
 linters:
@@ -26,3 +27,7 @@ formatters:
       - third_party$
       - builtin$
       - examples$
+
+formatters:
+  enable:
+    - gofumpt

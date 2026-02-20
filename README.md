@@ -78,7 +78,7 @@ This reduces the cost of maintaining the BlobstreamX deployment while keeping th
 ### Requirements
 
 To use the replay command, the whole BlobstreamX stack needs to be already deployed on the new chain.
-Refer to [docs](https://docs.celestia.org/how-to-guides/blobstreamx#deploy-blobstream-x).
+Refer to [docs](https://docs.celestia.org/operate/blobstream/deploy-contract/).
 
 Also, make sure the trusted block used to initialise the BlobstreamX contract corresponds to a `start_block`
 in the existing BlobstreamX deployment. Otherwise, the proofs will not be able to be relayed.
@@ -136,7 +136,7 @@ make fmt
 
 ## Useful links
 
-The Blobstream documentation is in [docs](https://docs.celestia.org/how-to-guides/blobstream).
+The Blobstream documentation is in [docs](https://docs.celestia.org/learn/blobstream/).
 
 The smart contract implementation is in [blobstream-contracts](https://github.com/celestiaorg/blobstream-contracts).
 

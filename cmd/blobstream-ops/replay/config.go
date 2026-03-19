@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/celestiaorg/blobstream-ops/cmd/blobstream-ops/common"
+	"github.com/celestiaorg/blobstream-ops/cmd/blobstream-ops/cmdutil"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/spf13/viper"
 
@@ -41,93 +41,93 @@ func addFlags(cmd *cobra.Command) *cobra.Command {
 	cmd.Flags().String(
 		FlagSourceEVMRPC,
 		"http://localhost:8545",
-		fmt.Sprintf("Specify the Ethereum rpc address of the source EVM chain. Corresponding environment variable %s", common.ToEnvVariableFormat(FlagSourceEVMRPC)),
+		fmt.Sprintf("Specify the Ethereum rpc address of the source EVM chain. Corresponding environment variable %s", cmdutil.ToEnvVariableFormat(FlagSourceEVMRPC)),
 	)
-	common.BindFlagAndEnvVar(cmd, FlagSourceEVMRPC)
+	cmdutil.BindFlagAndEnvVar(cmd, FlagSourceEVMRPC)
 
 	cmd.Flags().String(
 		FlagTargetEVMRPC,
 		"http://localhost:8545",
-		fmt.Sprintf("Specify the Ethereum rpc address of the target EVM chain. Corresponding environment variable %s", common.ToEnvVariableFormat(FlagTargetEVMRPC)),
+		fmt.Sprintf("Specify the Ethereum rpc address of the target EVM chain. Corresponding environment variable %s", cmdutil.ToEnvVariableFormat(FlagTargetEVMRPC)),
 	)
-	common.BindFlagAndEnvVar(cmd, FlagTargetEVMRPC)
+	cmdutil.BindFlagAndEnvVar(cmd, FlagTargetEVMRPC)
 
 	cmd.Flags().String(
 		FlagSourceEVMContractAddress,
 		"",
-		fmt.Sprintf("Specify the source contract at which the source BlobstreamX contract is deployed. Corresponding environment variable %s", common.ToEnvVariableFormat(FlagSourceEVMContractAddress)),
+		fmt.Sprintf("Specify the source contract at which the source BlobstreamX contract is deployed. Corresponding environment variable %s", cmdutil.ToEnvVariableFormat(FlagSourceEVMContractAddress)),
 	)
-	common.BindFlagAndEnvVar(cmd, FlagSourceEVMContractAddress)
+	cmdutil.BindFlagAndEnvVar(cmd, FlagSourceEVMContractAddress)
 
 	cmd.Flags().String(
 		FlagTargetEVMContractAddress,
 		"",
-		fmt.Sprintf("Specify the target contract at which the target BlobstreamX contract is deployed. Corresponding environment variable %s", common.ToEnvVariableFormat(FlagTargetEVMContractAddress)),
+		fmt.Sprintf("Specify the target contract at which the target BlobstreamX contract is deployed. Corresponding environment variable %s", cmdutil.ToEnvVariableFormat(FlagTargetEVMContractAddress)),
 	)
-	common.BindFlagAndEnvVar(cmd, FlagTargetEVMContractAddress)
+	cmdutil.BindFlagAndEnvVar(cmd, FlagTargetEVMContractAddress)
 
 	cmd.Flags().String(
 		FlagTargetChainGateway,
 		"",
-		fmt.Sprintf("Specify the target chain succinct gateway contract address. Corresponding environment variable %s", common.ToEnvVariableFormat(FlagTargetChainGateway)),
+		fmt.Sprintf("Specify the target chain succinct gateway contract address. Corresponding environment variable %s", cmdutil.ToEnvVariableFormat(FlagTargetChainGateway)),
 	)
-	common.BindFlagAndEnvVar(cmd, FlagTargetChainGateway)
+	cmdutil.BindFlagAndEnvVar(cmd, FlagTargetChainGateway)
 
 	cmd.Flags().String(
 		FlagLogLevel,
 		"info",
-		fmt.Sprintf("The logging level (trace|debug|info|warn|error|fatal|panic). Corresponding environment variable %s", common.ToEnvVariableFormat(FlagLogLevel)),
+		fmt.Sprintf("The logging level (trace|debug|info|warn|error|fatal|panic). Corresponding environment variable %s", cmdutil.ToEnvVariableFormat(FlagLogLevel)),
 	)
-	common.BindFlagAndEnvVar(cmd, FlagLogLevel)
+	cmdutil.BindFlagAndEnvVar(cmd, FlagLogLevel)
 
 	cmd.Flags().String(
 		FlagLogFormat,
 		"plain",
-		fmt.Sprintf("The logging format (json|plain). Corresponding environment variable %s", common.ToEnvVariableFormat(FlagLogFormat)),
+		fmt.Sprintf("The logging format (json|plain). Corresponding environment variable %s", cmdutil.ToEnvVariableFormat(FlagLogFormat)),
 	)
-	common.BindFlagAndEnvVar(cmd, FlagLogFormat)
+	cmdutil.BindFlagAndEnvVar(cmd, FlagLogFormat)
 
 	cmd.Flags().String(
 		FlagCoreRPC,
 		"tcp://localhost:26657",
-		fmt.Sprintf("The celestia app rpc address. Corresponding environment variable %s", common.ToEnvVariableFormat(FlagCoreRPC)),
+		fmt.Sprintf("The celestia app rpc address. Corresponding environment variable %s", cmdutil.ToEnvVariableFormat(FlagCoreRPC)),
 	)
-	common.BindFlagAndEnvVar(cmd, FlagCoreRPC)
+	cmdutil.BindFlagAndEnvVar(cmd, FlagCoreRPC)
 
 	cmd.Flags().Bool(
 		FlagVerify,
 		false,
-		fmt.Sprintf("Set to verify the commitments before replaying their proofs. Require the core rpc flag to be set. Corresponding environment variable %s", common.ToEnvVariableFormat(FlagVerify)),
+		fmt.Sprintf("Set to verify the commitments before replaying their proofs. Require the core rpc flag to be set. Corresponding environment variable %s", cmdutil.ToEnvVariableFormat(FlagVerify)),
 	)
-	common.BindFlagAndEnvVar(cmd, FlagVerify)
+	cmdutil.BindFlagAndEnvVar(cmd, FlagVerify)
 
 	cmd.Flags().String(
 		FlagEVMPrivateKey,
 		"",
-		fmt.Sprintf("Specify the EVM private key, in hex format, to use for replaying transaction in the target chain. Corresponding account should be funded. Corresponding environment variable %s", common.ToEnvVariableFormat(FlagEVMPrivateKey)),
+		fmt.Sprintf("Specify the EVM private key, in hex format, to use for replaying transaction in the target chain. Corresponding account should be funded. Corresponding environment variable %s", cmdutil.ToEnvVariableFormat(FlagEVMPrivateKey)),
 	)
-	common.BindFlagAndEnvVar(cmd, FlagEVMPrivateKey)
+	cmdutil.BindFlagAndEnvVar(cmd, FlagEVMPrivateKey)
 
 	cmd.Flags().String(
 		FlagHeaderRangeFunctionID,
 		"",
-		fmt.Sprintf("Specify the function ID of the header range circuit in the target BlobstreamX contract, in hex format. Corresponding environment variable %s", common.ToEnvVariableFormat(FlagHeaderRangeFunctionID)),
+		fmt.Sprintf("Specify the function ID of the header range circuit in the target BlobstreamX contract, in hex format. Corresponding environment variable %s", cmdutil.ToEnvVariableFormat(FlagHeaderRangeFunctionID)),
 	)
-	common.BindFlagAndEnvVar(cmd, FlagHeaderRangeFunctionID)
+	cmdutil.BindFlagAndEnvVar(cmd, FlagHeaderRangeFunctionID)
 
 	cmd.Flags().String(
 		FlagNextHeaderFunctionID,
 		"",
-		fmt.Sprintf("Specify the function ID of the next header circuit in the target BlobstreamX contract, in hex format. Corresponding environment variable %s", common.ToEnvVariableFormat(FlagNextHeaderFunctionID)),
+		fmt.Sprintf("Specify the function ID of the next header circuit in the target BlobstreamX contract, in hex format. Corresponding environment variable %s", cmdutil.ToEnvVariableFormat(FlagNextHeaderFunctionID)),
 	)
-	common.BindFlagAndEnvVar(cmd, FlagNextHeaderFunctionID)
+	cmdutil.BindFlagAndEnvVar(cmd, FlagNextHeaderFunctionID)
 
 	cmd.Flags().Int64(
 		FlagEVMFilterRange,
 		5000,
-		fmt.Sprintf("Specify the eth_getLogs filter range. Corresponding environment variable %s", common.ToEnvVariableFormat(FlagEVMFilterRange)),
+		fmt.Sprintf("Specify the eth_getLogs filter range. Corresponding environment variable %s", cmdutil.ToEnvVariableFormat(FlagEVMFilterRange)),
 	)
-	common.BindFlagAndEnvVar(cmd, FlagEVMFilterRange)
+	cmdutil.BindFlagAndEnvVar(cmd, FlagEVMFilterRange)
 
 	return cmd
 }
@@ -154,17 +154,17 @@ func (cfg Config) ValidateBasics() error {
 			"%s: flag --%s or environment variable %s",
 			err.Error(),
 			FlagSourceEVMContractAddress,
-			common.ToEnvVariableFormat(FlagSourceEVMContractAddress),
+			cmdutil.ToEnvVariableFormat(FlagSourceEVMContractAddress),
 		)
 	}
 	if err := ValidateEVMAddress(cfg.TargetContractAddress); err != nil {
-		return fmt.Errorf("%s: flag --%s or environment variable %s", err.Error(), FlagTargetEVMContractAddress, common.ToEnvVariableFormat(FlagTargetEVMContractAddress))
+		return fmt.Errorf("%s: flag --%s or environment variable %s", err.Error(), FlagTargetEVMContractAddress, cmdutil.ToEnvVariableFormat(FlagTargetEVMContractAddress))
 	}
 	if err := ValidateEVMAddress(cfg.TargetChainGateway); err != nil {
-		return fmt.Errorf("%s: flag --%s or environment variable %s", err.Error(), FlagTargetChainGateway, common.ToEnvVariableFormat(FlagTargetChainGateway))
+		return fmt.Errorf("%s: flag --%s or environment variable %s", err.Error(), FlagTargetChainGateway, cmdutil.ToEnvVariableFormat(FlagTargetChainGateway))
 	}
 	if cfg.Verify && cfg.CoreRPC == "" {
-		return fmt.Errorf("flag --%s is set but the core RPC flag --%s is not set. Please set --%s or environment variable %s", FlagVerify, FlagCoreRPC, FlagCoreRPC, common.ToEnvVariableFormat(FlagCoreRPC))
+		return fmt.Errorf("flag --%s is set but the core RPC flag --%s is not set. Please set --%s or environment variable %s", FlagVerify, FlagCoreRPC, FlagCoreRPC, cmdutil.ToEnvVariableFormat(FlagCoreRPC))
 	}
 	return nil
 }
@@ -198,7 +198,7 @@ func parseFlags() (Config, error) {
 
 	rawPrivateKey := viper.GetString(FlagEVMPrivateKey)
 	if rawPrivateKey == "" {
-		return Config{}, fmt.Errorf("please set the private key --%s or %s", FlagEVMPrivateKey, common.ToEnvVariableFormat(FlagEVMPrivateKey))
+		return Config{}, fmt.Errorf("please set the private key --%s or %s", FlagEVMPrivateKey, cmdutil.ToEnvVariableFormat(FlagEVMPrivateKey))
 	}
 	rawPrivateKey = strings.TrimPrefix(rawPrivateKey, "0x")
 	privateKey, err := crypto.HexToECDSA(rawPrivateKey)
@@ -208,7 +208,7 @@ func parseFlags() (Config, error) {
 
 	strHeaderRange := viper.GetString(FlagHeaderRangeFunctionID)
 	if strHeaderRange == "" {
-		return Config{}, fmt.Errorf("please set the header range function ID --%s or %s", FlagHeaderRangeFunctionID, common.ToEnvVariableFormat(FlagHeaderRangeFunctionID))
+		return Config{}, fmt.Errorf("please set the header range function ID --%s or %s", FlagHeaderRangeFunctionID, cmdutil.ToEnvVariableFormat(FlagHeaderRangeFunctionID))
 	}
 	strHeaderRange = strings.TrimPrefix(strHeaderRange, "0x")
 	decodedHeaderRange, err := hex.DecodeString(strHeaderRange)
@@ -220,7 +220,7 @@ func parseFlags() (Config, error) {
 
 	strNextHeader := viper.GetString(FlagNextHeaderFunctionID)
 	if strNextHeader == "" {
-		return Config{}, fmt.Errorf("please set the next header function ID --%s or %s", FlagNextHeaderFunctionID, common.ToEnvVariableFormat(FlagNextHeaderFunctionID))
+		return Config{}, fmt.Errorf("please set the next header function ID --%s or %s", FlagNextHeaderFunctionID, cmdutil.ToEnvVariableFormat(FlagNextHeaderFunctionID))
 	}
 	strNextHeader = strings.TrimPrefix(strNextHeader, "0x")
 	decodedNextHeader, err := hex.DecodeString(strNextHeader)

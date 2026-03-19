@@ -1,9 +1,9 @@
 package root
 
 import (
+	"github.com/celestiaorg/blobstream-ops/cmd/blobstream-ops/buildinfo"
 	"github.com/celestiaorg/blobstream-ops/cmd/blobstream-ops/replay"
 	"github.com/celestiaorg/blobstream-ops/cmd/blobstream-ops/verify"
-	"github.com/celestiaorg/blobstream-ops/cmd/blobstream-ops/version"
 	"github.com/spf13/cobra"
 )
 
@@ -17,7 +17,7 @@ func Cmd() *cobra.Command {
 	}
 
 	rootCmd.AddCommand(
-		version.Cmd,
+		buildinfo.Cmd,
 		verify.Command(),
 		replay.Command(),
 	)

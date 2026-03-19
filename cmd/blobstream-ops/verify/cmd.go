@@ -5,7 +5,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/celestiaorg/blobstream-ops/cmd/blobstream-ops/buildinfo"
+	"github.com/celestiaorg/blobstream-ops/cmd/blobstream-ops/buildmeta"
 	"github.com/celestiaorg/blobstream-ops/cmd/blobstream-ops/cmdutil"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	ethcmn "github.com/ethereum/go-ethereum/common"
@@ -55,7 +55,7 @@ func VerifyContractCommand() *cobra.Command {
 				return err
 			}
 
-			buildInfo := buildinfo.GetBuildInfo()
+			buildInfo := buildmeta.GetBuildInfo()
 			logger.Info("initializing verifier", "version", buildInfo.SemanticVersion, "build_date", buildInfo.BuildTime)
 
 			ctx, cancel := context.WithCancel(cmd.Context())

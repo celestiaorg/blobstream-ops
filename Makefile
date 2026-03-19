@@ -2,7 +2,7 @@
 
 VERSION := $(shell echo $(shell git describe --tags 2>/dev/null || git log -1 --format='%h') | sed 's/^v//')
 DOCKER := $(shell which docker)
-versioningPath := "github.com/celestiaorg/blobstream-ops/cmd/blobstream-ops/buildinfo"
+versioningPath := "github.com/celestiaorg/blobstream-ops/cmd/blobstream-ops/buildmeta"
 LDFLAGS=-ldflags="-X '$(versioningPath).buildTime=$(shell date)' -X '$(versioningPath).lastCommit=$(shell git rev-parse HEAD)' -X '$(versioningPath).semanticVersion=$(shell git describe --tags --dirty=-dev 2>/dev/null || git rev-parse --abbrev-ref HEAD)'"
 
 all: install

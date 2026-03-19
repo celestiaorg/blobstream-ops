@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/celestiaorg/blobstream-ops/cmd/blobstream-ops/common"
+	"github.com/celestiaorg/blobstream-ops/cmd/blobstream-ops/cmdutil"
 	ethcmn "github.com/ethereum/go-ethereum/common"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -26,37 +26,37 @@ func addStartFlags(cmd *cobra.Command) *cobra.Command {
 	cmd.Flags().String(
 		FlagEVMRPC,
 		"http://localhost:8545",
-		fmt.Sprintf("Specify the ethereum rpc address. Corresponding environment variable %s", common.ToEnvVariableFormat(FlagEVMRPC)),
+		fmt.Sprintf("Specify the ethereum rpc address. Corresponding environment variable %s", cmdutil.ToEnvVariableFormat(FlagEVMRPC)),
 	)
-	common.BindFlagAndEnvVar(cmd, FlagEVMRPC)
+	cmdutil.BindFlagAndEnvVar(cmd, FlagEVMRPC)
 
 	cmd.Flags().String(
 		FlagEVMContractAddress,
 		"",
-		fmt.Sprintf("Specify the contract at which the BlobstreamX contract is deployed. Corresponding environment variable %s", common.ToEnvVariableFormat(FlagEVMContractAddress)),
+		fmt.Sprintf("Specify the contract at which the BlobstreamX contract is deployed. Corresponding environment variable %s", cmdutil.ToEnvVariableFormat(FlagEVMContractAddress)),
 	)
-	common.BindFlagAndEnvVar(cmd, FlagEVMContractAddress)
+	cmdutil.BindFlagAndEnvVar(cmd, FlagEVMContractAddress)
 
 	cmd.Flags().String(
 		FlagLogLevel,
 		"info",
-		fmt.Sprintf("The logging level (trace|debug|info|warn|error|fatal|panic). Corresponding environment variable %s", common.ToEnvVariableFormat(FlagLogLevel)),
+		fmt.Sprintf("The logging level (trace|debug|info|warn|error|fatal|panic). Corresponding environment variable %s", cmdutil.ToEnvVariableFormat(FlagLogLevel)),
 	)
-	common.BindFlagAndEnvVar(cmd, FlagLogLevel)
+	cmdutil.BindFlagAndEnvVar(cmd, FlagLogLevel)
 
 	cmd.Flags().String(
 		FlagLogFormat,
 		"plain",
-		fmt.Sprintf("The logging format (json|plain). Corresponding environment variable %s", common.ToEnvVariableFormat(FlagLogFormat)),
+		fmt.Sprintf("The logging format (json|plain). Corresponding environment variable %s", cmdutil.ToEnvVariableFormat(FlagLogFormat)),
 	)
-	common.BindFlagAndEnvVar(cmd, FlagLogFormat)
+	cmdutil.BindFlagAndEnvVar(cmd, FlagLogFormat)
 
 	cmd.Flags().String(
 		FlagCoreRPC,
 		"tcp://localhost:26657",
-		fmt.Sprintf("The celestia app rpc address. Corresponding environment variable %s", common.ToEnvVariableFormat(FlagCoreRPC)),
+		fmt.Sprintf("The celestia app rpc address. Corresponding environment variable %s", cmdutil.ToEnvVariableFormat(FlagCoreRPC)),
 	)
-	common.BindFlagAndEnvVar(cmd, FlagCoreRPC)
+	cmdutil.BindFlagAndEnvVar(cmd, FlagCoreRPC)
 
 	return cmd
 }

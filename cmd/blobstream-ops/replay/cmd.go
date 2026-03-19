@@ -3,8 +3,8 @@ package replay
 import (
 	"context"
 
-	"github.com/celestiaorg/blobstream-ops/cmd/blobstream-ops/common"
-	"github.com/celestiaorg/blobstream-ops/cmd/blobstream-ops/version"
+	"github.com/celestiaorg/blobstream-ops/cmd/blobstream-ops/buildinfo"
+	"github.com/celestiaorg/blobstream-ops/cmd/blobstream-ops/cmdutil"
 	"github.com/celestiaorg/blobstream-ops/replay"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	ethcmn "github.com/ethereum/go-ethereum/common"
@@ -30,19 +30,19 @@ func Command() *cobra.Command {
 				return err
 			}
 
-			logger, err := common.GetLogger(config.LogLevel, config.LogFormat)
+			logger, err := cmdutil.GetLogger(config.LogLevel, config.LogFormat)
 			if err != nil {
 				return err
 			}
 
-			buildInfo := version.GetBuildInfo()
+			buildInfo := buildinfo.GetBuildInfo()
 			logger.Info("initializing replay service", "version", buildInfo.SemanticVersion, "build_date", buildInfo.BuildTime)
 
 			ctx, cancel := context.WithCancel(cmd.Context())
 			defer cancel()
 
 			// Listen for and trap any OS signal to graceful shutdown and exit
-			go common.TrapSignal(logger, cancel)
+			go cmdutil.TrapSignal(logger, cancel)
 
 			// connecting to the source BlobstreamX contract
 			sourceEVMClient, err := ethclient.Dial(config.SourceEVMRPC)

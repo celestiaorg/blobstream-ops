@@ -3,7 +3,7 @@ package replay
 import (
 	"context"
 
-	"github.com/celestiaorg/blobstream-ops/cmd/blobstream-ops/buildinfo"
+	"github.com/celestiaorg/blobstream-ops/cmd/blobstream-ops/buildmeta"
 	"github.com/celestiaorg/blobstream-ops/cmd/blobstream-ops/cmdutil"
 	"github.com/celestiaorg/blobstream-ops/replay"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -35,7 +35,7 @@ func Command() *cobra.Command {
 				return err
 			}
 
-			buildInfo := buildinfo.GetBuildInfo()
+			buildInfo := buildmeta.GetBuildInfo()
 			logger.Info("initializing replay service", "version", buildInfo.SemanticVersion, "build_date", buildInfo.BuildTime)
 
 			ctx, cancel := context.WithCancel(cmd.Context())

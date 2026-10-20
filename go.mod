@@ -78,7 +78,7 @@ require (
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/handlers v1.5.1 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
-	github.com/gorilla/websocket v1.5.0 // indirect
+	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/grafana/otel-profiling-go v0.5.1 // indirect
 	github.com/grafana/pyroscope-go v1.2.7 // indirect
 	github.com/grafana/pyroscope-go/godeltaprof v0.1.9 // indirect
@@ -95,7 +95,7 @@ require (
 	github.com/jhump/protoreflect v1.15.3 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/jmhodges/levigo v1.0.0 // indirect
-	github.com/klauspost/compress v1.17.11 // indirect
+	github.com/klauspost/compress v1.18.7 // indirect
 	github.com/lib/pq v1.10.7 // indirect
 	github.com/libp2p/go-buffer-pool v0.1.0 // indirect
 	github.com/linxGnu/grocksdb v1.8.6 // indirect
@@ -152,7 +152,7 @@ require (
 	google.golang.org/genproto v0.0.0-20241118233622-e639e219e697 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20260819154853-08b0e4226688 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260819154853-08b0e4226688 // indirect
-	google.golang.org/grpc v1.83.1 // indirect
+	google.golang.org/grpc v1.83.2 // indirect
 	google.golang.org/protobuf v1.36.12 // indirect
 	nhooyr.io/websocket v1.8.6 // indirect
 	sigs.k8s.io/yaml v1.4.0 // indirect

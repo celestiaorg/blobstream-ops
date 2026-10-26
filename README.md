@@ -1,5 +1,17 @@
 # blobstream-ops
 
+## ⚠️ DEPRECATED
+
+**This repository is temporarily deprecated and is not maintained. It should not be used in production.**
+
+As of September 2026, the Succinct-operated SP1 Blobstream deployments are no longer maintained and
+do not receive new commitments. See the [Blobstream service status](https://docs.celestia.org/learn/blobstream/).
+
+This repository is archived for now and may be unarchived once a maintained Blobstream implementation
+is back in production.
+
+## Overview
+
 This repo contains a set of Blobstream related tooling.
 
 Note: currently, this repo only supports BlobstreamX deployments. If there is a need to support SP1 Blobstream, please reach out to the team.
